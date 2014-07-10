@@ -5,9 +5,9 @@
 	<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<canvas id='snakeCanvas' width="300" height="300" style="border: 1px solid black">
-</canvas>
+<body align="center">
+<h3>Classic Snake</h3>
+<canvas id='snakeCanvas' width="300" height="300" style="border: 1px solid black"></canvas>
 
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -46,9 +46,11 @@
     		
     	};
     	var stepOver = function() {
-    		for(i = 0; i < tile.length - 2; i++) {
+    		var a = 1;
+    		for(var i = 0; i < tile.length - 1; i++) {
     			if (tile[tile.length - 1].x === tile[i].x && tile[tile.length - 1].y === tile[i].y) {
-					restart();    			
+    				tile[tile.length - 1].x = 31;
+    				outOfCanvas();
 				}
     		}
     	};
@@ -107,31 +109,13 @@
 		    			new_head = new Tile(head.x + 1, head.y, 10, ctx);		    				    		
 		    		break;
 	    		case "left":
-	    		    //if (head.x >= 0) {
 	    				new_head = new Tile(head.x - 1, head.y, 10, ctx);
-	    			//}
-	    			//else {
-	    			//	head.x = 31;
-	    			//	new_head = new Tile(head.x - 1, head.y, 10, ctx);
-	    			//}
 	    			break;
 	    		case "up" :
-	    			//if (head.y <= -1) {
-	    			//	head.y = 31;
-		    		//	new_head = new Tile(head.x, head.y - 1, 10, ctx);
-		    		//}
-	    			//else {
 	    				new_head = new Tile(head.x, head.y - 1, 10, ctx);
-	    			//}
 	    			break;
 	    		case "down":
-	    			//if (head.y >= 31) {
-    				//	head.y = 0;
-	    			//	new_head = new Tile(head.x, head.y + 1, 10, ctx);
-    				//}
-    				//else {
 	    				new_head = new Tile(head.x, head.y + 1, 10, ctx);
-	    			//}
 	    			break;
 	    	}
 
@@ -145,7 +129,6 @@
   		food = new Point(random(), random());
 
   		var gameLoop = function() {
-  			console.log(food);
   			setInterval( function() {
   				ctx.clearRect(0, 0, 300, 300);
   				snake.move();
@@ -156,7 +139,7 @@
   				food.print();
   				snake.outOfCanvas();
   				snake.stepOver();
-  			}, 70)
+  			}, 85)
   			}();
   		
     	return {
