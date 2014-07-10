@@ -13,9 +13,173 @@
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	var canvas = document.getElementById('snakeCanvas');
-	var ctx = c.getContext("2d");
-	ctx.fillStyle = "red";
-    ctx.fillRect(0,0,100,100);
+	var ctx = canvas.getContext("2d");
+	var canvasWidth = $('#snakeCanvas').width();
+	var canvasHeight = $('#snakeCanvas').height();
+
+    var snake = ( function(ctx) {
+    	var tile = [];
+    	[1,2,3,4].forEach(function(i) {
+    		tile.push(new Tile(i, 0 , 10, ctx));
+    	});
+    	var direction = 'right';
+    	var food;
+    	var restart = function() {
+    		tile = [];
+    		[1,2,3,4].forEach(function(i) {
+    		tile.push(new Tile(i, 0 , 10, ctx));
+    		});
+    		direction = 'right';
+    		food = new Point(random(), random());
+    		console.log('Game over!');
+    	};
+    	var stepOver = function() {
+    		for(i = 3; i < tile.length - 1; i++) {
+    			if (tile[tile.length - 1].x === tile[i].x && tile[tile.length - 1].y === tile[i].y) {
+    				restart();
+    			}
+    		}
+    	};
+    	var outOfCanvas = function() {
+    		if (tile[tile.length - 1].x >= 31 || tile[tile.length - 1].x < 0 ||
+    			tile[tile.length - 1].y >= 31 || tile[tile.length - 1].y <= -1)
+    		restart();
+    	};
+    	var isFed = function() {
+    		if (tile[tile.length - 1].x*10 === food.x && (tile[tile.length - 1].y*10 === food.y)) {
+    			return true;
+    		}
+    		else {
+    			return false;
+    		}
+    	};
+    	var print = function() {
+    		tile.forEach(function(tile) {
+    			tile.print();
+    		});
+    	};
+    	var random = function() {
+    		var a = Math.floor((Math.random() * 290) + 10);
+    		a = a - a%10;
+    		return a;
+    	};
+    	var Point = function(x, y) {
+    		this.x = x;
+    		this.y = y;
+    		this.print = function() {
+    			ctx.fillStyle = "green";
+    			ctx.fillRect(this.x, this.y, 10, 10);
+    		}
+    	};
+
+    	var keysToDirections = {
+	    	37: 'left',
+	    	38: 'up',
+	    	39: 'right',
+	    	40: 'down'
+	    };
+	    $(document).keydown(function (event) {
+	    	var key = event.which;
+	    	var current_direction = keysToDirections[key];
+
+	    	if (current_direction) {
+	    		direction = current_direction;
+	    		event.preventDefault();
+	    	}
+	    	else if (key === 13) {
+	    		restart();
+	    	}
+	    });
+    	var move = function() {
+    		var head = tile[tile.length - 1];
+    		switch (direction) {
+    			case "right":
+		    			new_head = new Tile(head.x + 1, head.y, 10, ctx);		    				    		
+		    		break;
+	    		case "left":
+	    		    //if (head.x >= 0) {
+	    				new_head = new Tile(head.x - 1, head.y, 10, ctx);
+	    			//}
+	    			//else {
+	    			//	head.x = 31;
+	    			//	new_head = new Tile(head.x - 1, head.y, 10, ctx);
+	    			//}
+	    			break;
+	    		case "up" :
+	    			//if (head.y <= -1) {
+	    			//	head.y = 31;
+		    		//	new_head = new Tile(head.x, head.y - 1, 10, ctx);
+		    		//}
+	    			//else {
+	    				new_head = new Tile(head.x, head.y - 1, 10, ctx);
+	    			//}
+	    			break;
+	    		case "down":
+	    			//if (head.y >= 31) {
+    				//	head.y = 0;
+	    			//	new_head = new Tile(head.x, head.y + 1, 10, ctx);
+    				//}
+    				//else {
+	    				new_head = new Tile(head.x, head.y + 1, 10, ctx);
+	    			//}
+	    			break;
+	    	}
+
+    		tile.push(new_head);
+    		if(!isFed()){
+			tile.shift();
+			}
+	    	head = new_head;
+    	};
+
+  		food = new Point(random(), random());
+
+  		var gameLoop = function() {
+  			console.log(food);
+  			setInterval( function() {
+  				ctx.clearRect(0, 0, 300, 300);
+  				snake.move();
+  				snake.print();
+  				if(snake.isFed()) {
+					food = new Point(random(), random());
+  				}    	
+  				food.print();
+  				snake.stepOver();
+  				snake.outOfCanvas();
+  			
+  			}, 100)
+  			}();
+  		
+    	return {
+    		print:print,
+    		move:move,
+    		gameLoop:gameLoop,
+    		Point:Point,
+    		isFed:isFed,
+    		stepOver:stepOver,
+    		outOfCanvas:outOfCanvas
+    	}	
+    }(ctx))
+
+    snake.print();
+    function Tile(x, y, size, ctx) {
+    	this.x = x;
+    	this.y = y;
+    	this.ctx = ctx;
+    	this.size = size;
+    	this.print = function() {
+    		ctx.fillStyle = "purple";
+    		ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);
+    	}
+    }
+  
+    
+
+//    var moveDown = function() {
+//    	var newPoint = new Tile(2,2,ctx);
+//    	newPoint.print();
+//    };
+//    moveDown();
 </script>
 </body>
 </html>
