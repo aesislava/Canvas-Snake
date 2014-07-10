@@ -25,19 +25,31 @@
     	var direction = 'right';
     	var food;
     	var restart = function() {
-    		tile = [];
+    		ctx.clearRect(0, 0, 300, 300);
+   		    ctx.fillStyle = 'red';
+ 	        ctx.font = "bold 40px Arial";
+		    ctx.fillText("GAME OVER", 28, 130);
+		    ctx.fillStyle = 'darkgray';
+		    ctx.font = "13px Arial";
+		    ctx.fillText("press enter to restart", 90, 290)
+		    $(document).keydown(function (event) {
+	    	var key = event.which;
+	    	if (key === 13) {
+	    	tile = [];
     		[1,2,3,4].forEach(function(i) {
     		tile.push(new Tile(i, 0 , 10, ctx));
     		});
     		direction = 'right';
     		food = new Point(random(), random());
-    		console.log('Game over!');
+	    	}
+	    });
+    		
     	};
     	var stepOver = function() {
-    		for(i = 3; i < tile.length - 1; i++) {
+    		for(i = 0; i < tile.length - 2; i++) {
     			if (tile[tile.length - 1].x === tile[i].x && tile[tile.length - 1].y === tile[i].y) {
-    				restart();
-    			}
+					restart();    			
+				}
     		}
     	};
     	var outOfCanvas = function() {
@@ -86,9 +98,7 @@
 	    		direction = current_direction;
 	    		event.preventDefault();
 	    	}
-	    	else if (key === 13) {
-	    		restart();
-	    	}
+	    	
 	    });
     	var move = function() {
     		var head = tile[tile.length - 1];
@@ -144,10 +154,9 @@
 					food = new Point(random(), random());
   				}    	
   				food.print();
-  				snake.stepOver();
   				snake.outOfCanvas();
-  			
-  			}, 100)
+  				snake.stepOver();
+  			}, 70)
   			}();
   		
     	return {
